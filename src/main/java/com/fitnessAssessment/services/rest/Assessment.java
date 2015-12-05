@@ -1,25 +1,15 @@
-package com.fitnessAssessment.services.model;
+package com.fitnessAssessment.services.rest;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-import com.fitnessAssessment.services.model.Candidate;;
 
-@Entity
-@Table(name="assessment")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Assessment {
 	
-	  @Id
-	  @GeneratedValue(strategy=GenerationType.AUTO)
+
 	  private long assessment_id;
 	  
-	  @ManyToOne
-	  @JoinColumn(name="candidate_id")
+
 	  private Candidate candidate;	  
 	  
 	  private String goals;
@@ -28,19 +18,6 @@ public class Assessment {
 	  private int weight;
 	  //height in inches
 	  private int height;
-	  
-	  
-	public Assessment() {
-		super();
-	}
-	public Assessment(Candidate candidate, String goals, String existingConditions, int weight, int height) {
-		super();
-		this.candidate = candidate;
-		this.goals = goals;
-		this.existingConditions = existingConditions;
-		this.weight = weight;
-		this.height = height;
-	}
 	public long getAssessment_id() {
 		return assessment_id;
 	}

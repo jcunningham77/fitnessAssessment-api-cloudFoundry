@@ -1,4 +1,4 @@
-package com.fitnessAssessment.services.model;
+package com.fitnessAssessment.services.rest;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,16 +12,16 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-@Entity
-@Table(name="candidate")
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fitnessAssessment.services.rest.Assessment;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Candidate {
 	
-	  @Id
-	  @GeneratedValue(strategy=GenerationType.AUTO)
+
 	  private long candidate_id;
 	  
-	  @OneToMany(mappedBy="candidate")
-	  @OrderBy("assessment_id")
+
 	  private Set<Assessment> assessments = new HashSet();	  
 	  
 	  @NotNull
@@ -35,7 +35,6 @@ public class Candidate {
 	  
 	  public Candidate(long candidate_id)
 	  {
-		
 	    this.candidate_id = candidate_id;
 	  }
 	  
@@ -66,8 +65,6 @@ public class Candidate {
 	public String getEmail() {
 		return email;
 	}
-
-
 
 	public void setEmail(String email) {
 		this.email = email;
