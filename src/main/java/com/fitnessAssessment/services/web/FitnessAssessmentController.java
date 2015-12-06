@@ -81,6 +81,65 @@ public class FitnessAssessmentController {
 	    
 	  }	  
 	  
+	  @RequestMapping(value={"rest/candidate"}, method={org.springframework.web.bind.annotation.RequestMethod.PUT})
+	  @ApiOperation(value="UpdateCandidate", notes="Accepts a PUT method to update a candidate")
+	  public ResponseEntity<Object> updateCandidate(@ApiParam(value="RequestBody with a JSON RestCandidate", required=true, defaultValue="{\"id\": 1,\"email\": \"jcunningham77@gmail.com\",\"name\": \"Jeffrey B Cunningham\"}") @RequestBody com.fitnessAssessment.services.rest.Candidate inputRestCandidate)
+	    throws ResourceNotFoundException, InvalidRequestBodyException, Exception
+	  {
+	    HttpHeaders responseHeaders = new HttpHeaders();
+	    com.fitnessAssessment.services.model.Candidate candidate = null;
+	    com.fitnessAssessment.services.rest.Candidate restCandidate = new com.fitnessAssessment.services.rest.Candidate();
+	    
+	    candidate = (com.fitnessAssessment.services.model.Candidate)this.candidateDao.findOne(inputRestCandidate.getCandidate_id());
+	    if (candidate == null) {
+	      throw new ResourceNotFoundException("Resource Not Found", "No candidate with id = " + inputRestCandidate.getCandidate_id() + " found in repository");
+	    }
+	    
+	    if (inputRestCandidate.getEmail()==null){
+	    	throw new InvalidRequestBodyException("Required Field, 'email', not set", "Required field, \"email\", not set in the request");
+	    }
+
+	    if (inputRestCandidate.getFirstName()==null){
+	    	throw new InvalidRequestBodyException("Required Field, 'firstName', not set", "Required field, \"firstName\", not set in the request");
+	    }    
+	    
+	    if (inputRestCandidate.getLastName()==null){
+	    	throw new InvalidRequestBodyException("Required Field, 'lastName', not set", "Required field, \"lastName\", not set in the request");
+	    }    	    
+	    
+	    
+	    
+	    candidate.setEmail(inputRestCandidate.getEmail());
+	    candidate.setFirstName(inputRestCandidate.getFirstName());
+	    candidate.setLastName(inputRestCandidate.getLastName());
+	    this.candidateDao.save(candidate);
+	    
+	    restCandidate.setCandidate_id(candidate.getCandidate_id());
+	    restCandidate.setEmail(candidate.getEmail());
+	    restCandidate.setFirstName(candidate.getFirstName());
+	    restCandidate.setLastName(candidate.getLastName());
+	    
+	    return new ResponseEntity<Object>(restCandidate, responseHeaders, HttpStatus.OK);
+	  }
+	  
+	  @RequestMapping(value={"rest/candidate/{candidate-id}"}, method={org.springframework.web.bind.annotation.RequestMethod.DELETE})
+	  @ApiOperation(value="DeleteCandidate", notes="Accepts a DELETE method to delete a candidate")
+	  public ResponseEntity<Object> deleteCandidate(@ApiParam(value="Id of the Candidate record to update", required=true) @PathVariable("candidate-id") Long candidateId)
+	    throws Exception
+	  {
+	    HttpHeaders responseHeaders = new HttpHeaders();
+	    com.fitnessAssessment.services.model.Candidate candidate = null;
+	    com.fitnessAssessment.services.rest.Candidate restCandidate = new com.fitnessAssessment.services.rest.Candidate();
+	    
+	    candidate = (com.fitnessAssessment.services.model.Candidate)this.candidateDao.findOne(candidateId);
+	    if (candidate == null) {
+	      throw new ResourceNotFoundException("Resource Not Found", "No candidate with id = " + candidateId.toString() + " found in repository");
+	    }
+	    this.candidateDao.delete(candidate);
+	    
+	    return new ResponseEntity<Object>(restCandidate, responseHeaders, HttpStatus.NO_CONTENT);
+	  }	  
+	  
 	  @RequestMapping(value={"rest/candidate/{candidate-id}"}, method={org.springframework.web.bind.annotation.RequestMethod.GET})
 	  @ApiOperation(value="GetCandidate", notes="Accepts a GET method to retrieve a candidate by candidate ID")
 	  public ResponseEntity<Object> getCandidate(@ApiParam(value="UniqueKey for Candidate", required=true) @PathVariable("candidate-id") Long candidateId)
@@ -200,6 +259,76 @@ public class FitnessAssessmentController {
 	    return new ResponseEntity<Object>(restAssessment, responseHeaders, HttpStatus.OK);
 	  }	  
 	  
+	  @RequestMapping(value={"rest/assessment"}, method={org.springframework.web.bind.annotation.RequestMethod.PUT})
+	  @ApiOperation(value="UpdateAssessment", notes="Accepts a PUT method to update a assessment")
+	  public ResponseEntity<Object> updateAssessment(@ApiParam(value="RequestBody with a JSON com.fitnessAssessment.services.rest.Assessment", required=true) @RequestBody com.fitnessAssessment.services.rest.Assessment inputRestAssessment)
+	  {
+	    HttpHeaders responseHeaders = new HttpHeaders();
+	    try{
+		    com.fitnessAssessment.services.model.Assessment assessment = null;
+		    com.fitnessAssessment.services.rest.Assessment restAssessment = new com.fitnessAssessment.services.rest.Assessment();
+		    
+		    assessment = (com.fitnessAssessment.services.model.Assessment)this.assessmentDao.findOne(inputRestAssessment.getAssessment_id());
+		    if (assessment == null) {
+		      throw new ResourceNotFoundException("Resource Not Found", "No assessment with id = " + inputRestAssessment.getAssessment_id() + " found in repository");
+		    }
+		    //manually throw a InvalidRequestBodyException if one of the @NotNull Assessment fields is missing - 
+		    //for some reason this isn't resulting in an ConstraintViolationException like it does on the
+		    //insert
+		    if (inputRestAssessment.getHeight()==0){
+		    	throw new InvalidRequestBodyException("Required Field, \"height\", not set", "Required field, \"wager\", not set in the request");
+		    }
+		    
+		    if (inputRestAssessment.getWeight()==0){
+		    	throw new InvalidRequestBodyException("Required Field,  \"weight\",  not set", "Required field, \"homeTeam\", not set in the request");
+		    }	  
+		    
+		    
+		    
+		    assessment.setWeight(inputRestAssessment.getWeight());
+		    assessment.setHeight(inputRestAssessment.getHeight());
+		    assessment.setGoals(inputRestAssessment.getGoals());
+		    assessment.setExistingConditions(inputRestAssessment.getExistingConditions());
+		    logger.info("About to save assessment:" + assessment.toString());
+		    this.assessmentDao.save(assessment);
+		    
+		    restAssessment.setAssessment_id(assessment.getAssessment_id());
+		    restAssessment.setWeight(assessment.getWeight());
+		    restAssessment.setHeight(assessment.getHeight());
+		    restAssessment.setGoals(assessment.getGoals());
+		    restAssessment.setExistingConditions(assessment.getExistingConditions());
+		    
+		    return new ResponseEntity<Object>(restAssessment, responseHeaders, HttpStatus.OK);
+		//TODO: move the below exception handling to @ControllerAdvice    
+	    } catch (ConstraintViolationException ex) {
+	        throw new InvalidRequestBodyException("Required field not set on request", "Required field not set on request body"); 	    
+	  	} catch (InvalidRequestBodyException ex) {
+	        ErrorMessage errorMessage = new ErrorMessage();
+	        errorMessage.setMessage(ex.getMessage());
+	        return new ResponseEntity<Object>(errorMessage, responseHeaders, HttpStatus.BAD_REQUEST);	    
+	  	} catch (Exception ex) {
+	        ErrorMessage errorMessage = new ErrorMessage();
+	        errorMessage.setMessage(ex.getMessage());
+	        return new ResponseEntity<Object>(errorMessage, responseHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }   
+	  }  
 	  
+	  @RequestMapping(value={"rest/assessment/{assessment-id}"}, method={org.springframework.web.bind.annotation.RequestMethod.DELETE})
+	  @ApiOperation(value="DeleteAssessment", notes="Accepts a DELETE method to delete a assessment")
+	  public ResponseEntity<Object> deleteAssessment(@ApiParam(value="Id of the Assessment record to update", required=true) @PathVariable("assessment-id") Long assessmentId)
+	    throws Exception
+	  {
+	    HttpHeaders responseHeaders = new HttpHeaders();
+	    com.fitnessAssessment.services.model.Assessment assessment = null;
+	    com.fitnessAssessment.services.rest.Assessment restAssessment = new com.fitnessAssessment.services.rest.Assessment();
+	    
+	    assessment = (com.fitnessAssessment.services.model.Assessment)this.assessmentDao.findOne(assessmentId);
+	    if (assessment == null) {
+	      throw new ResourceNotFoundException("Resource Not Found", "No assessment with id = " + assessmentId.toString() + " found in repository");
+	    }
+	    this.assessmentDao.delete(assessment);
+	    
+	    return new ResponseEntity<Object>(restAssessment, responseHeaders, HttpStatus.NO_CONTENT);
+	  }	  
 
 }
