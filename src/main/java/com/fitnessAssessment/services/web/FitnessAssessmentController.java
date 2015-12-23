@@ -140,9 +140,33 @@ public class FitnessAssessmentController {
 	    return new ResponseEntity<Object>(restCandidate, responseHeaders, HttpStatus.NO_CONTENT);
 	  }	  
 	  
+	  @RequestMapping(value={"rest/candidate/"}, method={org.springframework.web.bind.annotation.RequestMethod.GET})
+	  @ApiOperation(value="GetCandidates", notes="Accepts a GET method to retrieve all candidates")
+	  public ResponseEntity<Object> getCandidates()
+	    throws Exception
+	  {
+	    logger.info("entering");
+	    HttpHeaders responseHeaders = new HttpHeaders();
+	    	Iterator<com.fitnessAssessment.services.model.Candidate> candidatesIterator = candidateDao.findAll().iterator();
+	    	com.fitnessAssessment.services.model.Candidate candidate = new com.fitnessAssessment.services.model.Candidate();
+	    	com.fitnessAssessment.services.rest.Candidate restCandidate = new com.fitnessAssessment.services.rest.Candidate();
+	    	ArrayList<com.fitnessAssessment.services.rest.Candidate> restCandidates = new ArrayList<com.fitnessAssessment.services.rest.Candidate>();
+	    	while (candidatesIterator.hasNext()){
+	    		restCandidate =  new com.fitnessAssessment.services.rest.Candidate();
+	    		candidate = candidatesIterator.next();
+	    		restCandidate.setCandidate_id(candidate.getCandidate_id());
+	    		restCandidate.setEmail(candidate.getEmail());
+	    		restCandidate.setLastName(candidate.getLastName());
+	    		restCandidate.setFirstName(candidate.getFirstName());
+	    		restCandidates.add(restCandidate);
+	    	}
+	    	return new ResponseEntity<Object>(restCandidates, responseHeaders, HttpStatus.OK);
+//	    }
+	  }	  	  
+	  
 	  @RequestMapping(value={"rest/candidate/{candidate-id}"}, method={org.springframework.web.bind.annotation.RequestMethod.GET})
 	  @ApiOperation(value="GetCandidate", notes="Accepts a GET method to retrieve a candidate by candidate ID")
-	  public ResponseEntity<Object> getCandidate(@ApiParam(value="UniqueKey for Candidate", required=true) @PathVariable("candidate-id") Long candidateId)
+	  public ResponseEntity<Object> getCandidate(@ApiParam(value="UniqueKey for Candidate", required=false) @PathVariable("candidate-id") Long candidateId)
 	    throws Exception
 	  {
 	    logger.info("entering");
@@ -177,6 +201,7 @@ public class FitnessAssessmentController {
 	    restCandidate.setAssessments(restAssessments);
 	    
 	    return new ResponseEntity<Object>(restCandidate, responseHeaders, HttpStatus.OK);
+
 	  }	  
 	  
 	  @RequestMapping(value={"rest/assessment"}, method={org.springframework.web.bind.annotation.RequestMethod.POST})
