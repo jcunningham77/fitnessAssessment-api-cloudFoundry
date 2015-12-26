@@ -28,7 +28,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 
-public class Application extends SpringBootServletInitializer
+public class Application //extends SpringBootServletInitializer <--make this an executable jar
 {
   /*@Bean
   public Docket swaggerApi()
@@ -90,10 +90,12 @@ public class Application extends SpringBootServletInitializer
 //    return bean;
 //  }
   
-  @Override
-  protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-      return application.sources(Application.class);
-  }
+
+  //make this an executable jar 
+  // @Override
+  // protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+  //     return application.sources(Application.class);
+  // }
   
   public static void main(String[] args) {
       SpringApplication.run(Application.class, args);

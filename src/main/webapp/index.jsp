@@ -1,14 +1,7 @@
 
 
 
-<%
-//Get version of application
-java.util.Properties prop = new java.util.Properties();
-prop.load(getServletContext().getResourceAsStream("/META-INF/MANIFEST.MF"));
-String build = prop.getProperty("Implementation-Version");  
 
-
-%>
 
 
 
@@ -85,7 +78,6 @@ String build = prop.getProperty("Implementation-Version");
 <BODY>
 	<div style="font-size: 30px" class="banner">Fitness Assessment</div>
 	
-	<div style="font-size: 12px" class="banner">Build:  <%=build%></div>	
 		
 	<br>
 	<div class="swagger"><a href="swagger-ui.html">Please use Swagger Documentation for V1 contracts/documentation/test harness</a></div>
