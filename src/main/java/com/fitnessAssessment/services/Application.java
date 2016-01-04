@@ -6,6 +6,7 @@ import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 
-public class Application //extends SpringBootServletInitializer <--make this an executable jar
+public class Application extends WebMvcAutoConfiguration//<--need to extend WebMvcAutoConfiguration to serve static content from embedded Tomcat when deploying as a Spring boot jar 
 {
   /*@Bean
   public Docket swaggerApi()

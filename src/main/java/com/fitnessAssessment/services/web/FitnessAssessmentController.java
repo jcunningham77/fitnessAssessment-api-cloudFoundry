@@ -209,19 +209,27 @@ public class FitnessAssessmentController {
 	  public ResponseEntity<Object> createAssessment(@ApiParam(value="RequestBody with a JSON RestAssessment", required=true) @RequestBody com.fitnessAssessment.services.rest.Assessment inputRestAssessment)
 	    throws Exception
 	  {
-	    HttpHeaders responseHeaders = new HttpHeaders();
+		logger.info("entering");
+		logger.info("inputRestAssessment.getAssessment_id() = " + inputRestAssessment.getAssessment_id());
+		logger.info("inputRestAssessment.toString() = " + inputRestAssessment.toString());
+		HttpHeaders responseHeaders = new HttpHeaders();
+	    
 	    com.fitnessAssessment.services.model.Assessment assessment = null;
 	    com.fitnessAssessment.services.rest.Assessment restAssessment = new com.fitnessAssessment.services.rest.Assessment();
 	    com.fitnessAssessment.services.rest.Candidate restCandidate = new com.fitnessAssessment.services.rest.Candidate();
+	    logger.info("createAssessment, before try");
 	    try
 	    {
-	      com.fitnessAssessment.services.model.Candidate candidate = (com.fitnessAssessment.services.model.Candidate)this.candidateDao.findOne(inputRestAssessment.getCandidate().getCandidate_id());
+	    	//TODO - add graceful error handling if the inputed request body doesn't include a assessment/candidate/candidate_id
+	    	logger.info("createAssessment, about to find candidate");  
+	    	com.fitnessAssessment.services.model.Candidate candidate = (com.fitnessAssessment.services.model.Candidate)this.candidateDao.findOne(inputRestAssessment.getCandidate().getCandidate_id());
 	      if (candidate == null)
 	      {
 	        logger.error("candidate not found, throwing Resource Not Found exception");
 	        logger.info("candidate not found, throwing Resource Not Found exception");
 	        throw new ResourceNotFoundException("Resource Not Found - no candidate with candidate_id: " + inputRestAssessment.getCandidate().getCandidate_id(), "No candidate with id = " + inputRestAssessment.getCandidate().getCandidate_id() + " found in repository");
 	      }
+	      logger.info("createAssessment, about to instantiate model assessment");
 	      assessment = new com.fitnessAssessment.services.model.Assessment(candidate, inputRestAssessment.getGoals(), inputRestAssessment.getExistingConditions(), inputRestAssessment.getHeight(), inputRestAssessment.getWeight());
 	      
 	      
@@ -240,16 +248,20 @@ public class FitnessAssessmentController {
 	      restCandidate.setAssessments(null);
 	      restAssessment.setCandidate(restCandidate);
 	    } catch (ConstraintViolationException ex) {
+	    	logger.error("caught ConstraintViolationException, " + ex.getMessage());
 	    	throw new InvalidRequestBodyException("Required Field not set", "Required field not set in the request"); 
 	 	} catch (InvalidRequestBodyException ex) {
+	 		logger.error("caught InvalidRequestBodyException, " + ex.getMessage());
 	        ErrorMessage errorMessage = new ErrorMessage();
 	        errorMessage.setMessage(ex.getMessage());
 	        return new ResponseEntity<Object>(errorMessage, responseHeaders, HttpStatus.BAD_REQUEST);	    
 	  	} catch (Exception ex) {
+	  		logger.error("caught Exception, " + ex.getMessage());
 	      ErrorMessage errorMessage = new ErrorMessage();
 	      errorMessage.setMessage(ex.getMessage());
 	      return new ResponseEntity<Object>(errorMessage, responseHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
+	    logger.info("returning response entitiy");
 	    return new ResponseEntity<Object>(restAssessment, responseHeaders, HttpStatus.CREATED);
 	  }	  
 	  
