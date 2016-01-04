@@ -2,6 +2,6 @@
 applications:
   - name: fitnessAssessment-215
     buildpack: java_buildpack
-    path: target/fitnessAssessment-api.jar
+    path: target/fitness-assessment-0.0.1.jar
     services:
       - mysql
